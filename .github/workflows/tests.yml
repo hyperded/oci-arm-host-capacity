@@ -1,4 +1,4 @@
-name: Tests
+name: Monst3r
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
     branches:
       - main
 
-#  schedule:
-#    - cron: '*/5 * * * *'
+schedule:
+   - cron: '*/5 * * * *'
 
 jobs:
   tests:

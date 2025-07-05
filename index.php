@@ -13,10 +13,17 @@ use Hitrov\FileCache;
 use Hitrov\OciApi;
 use Hitrov\OciConfig;
 use Hitrov\TooManyRequestsWaiter;
+use Kiwilan\Notifier\Notifier;
 
 $envFilename = empty($argv[1]) ? '.env' : $argv[1];
 $dotenv = Dotenv::createUnsafeImmutable(__DIR__, $envFilename);
 $dotenv->safeLoad();
+
+date_default_timezone_set('Asia/Ho_Chi_Minh');
+$notifier = new Notifier();
+
+// grown ass man btw
+$PRTS_THERESA_LINES = json_decode(getenv('PRTS_THERESA'), true);
 
 /*
  * No need to modify any value in this file anymore!
@@ -36,6 +43,7 @@ $config = new OciConfig(
     (int) getenv('OCI_OCPUS'),
     (int) getenv('OCI_MEMORY_IN_GBS')
 );
+$DISCORD_WEB_HOOK = getenv('DISCORD_WEB_HOOK');
 
 $bootVolumeSizeInGBs = (string) getenv('OCI_BOOT_VOLUME_SIZE_IN_GBS');
 $bootVolumeId = (string) getenv('OCI_BOOT_VOLUME_ID');
@@ -52,17 +60,17 @@ if (getenv('CACHE_AVAILABILITY_DOMAINS')) {
 if (getenv('TOO_MANY_REQUESTS_TIME_WAIT')) {
     $api->setWaiter(new TooManyRequestsWaiter((int) getenv('TOO_MANY_REQUESTS_TIME_WAIT')));
 }
-$notifier = (function (): \Hitrov\Interfaces\NotifierInterface {
-    /*
-     * if you have own https://core.telegram.org/bots
-     * and set TELEGRAM_BOT_API_KEY and your TELEGRAM_USER_ID in .env
-     *
-     * then you can get notified when script will succeed.
-     * otherwise - don't mind OR develop you own NotifierInterface
-     * to e.g. send SMS or email.
-     */
-    return new \Hitrov\Notification\Telegram();
-})();
+// $notifier = (function (): \Hitrov\Interfaces\NotifierInterface {
+//     /*
+//      * if you have own https://core.telegram.org/bots
+//      * and set TELEGRAM_BOT_API_KEY and your TELEGRAM_USER_ID in .env
+//      *
+//      * then you can get notified when script will succeed.
+//      * otherwise - don't mind OR develop you own NotifierInterface
+//      * to e.g. send SMS or email.
+//      */
+//     return new \Hitrov\Notification\Telegram();
+// })();
 
 $shape = getenv('OCI_SHAPE');
 
@@ -106,6 +114,12 @@ foreach ($availabilityDomains as $availabilityDomainEntity) {
             strpos($message, 'Out of host capacity') !== false
         ) {
             // trying next availability domain
+            if (date('H:i') === '17:00')
+            {
+                $discord = $notifier->discord($DISCORD_WEB_HOOK)
+                ->message($PRTS_THERESA_LINES[array_rand($PRTS_THERESA_LINES)])
+                ->send();
+            }
             sleep(16);
             continue;
         }
@@ -117,9 +131,9 @@ foreach ($availabilityDomains as $availabilityDomainEntity) {
     // success
     $message = json_encode($instanceDetails, JSON_PRETTY_PRINT);
     echo "$message\n";
-    if ($notifier->isSupported()) {
-        $notifier->notify($message);
-    }
+    $discord = $notifier->discord($DISCORD_WEB_HOOK)
+        ->message("Hello darling, it is finished. Good bye. for now.")
+        ->send();
 
     return;
 }

@@ -13,7 +13,8 @@
         "hitrov/oci-api-php-request-sign": "^1.0",
         "ext-curl": "*",
         "ext-json": "*",
-        "vlucas/phpdotenv": "^5.4"
+        "vlucas/phpdotenv": "^5.4",
+        "kiwilan/php-notifier": "^0.0.40"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"

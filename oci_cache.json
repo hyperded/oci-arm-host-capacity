@@ -1,0 +1,11 @@
+{
+    "getAvailabilityDomains": {
+        "a70ddea42f97ca64954ca9d9b76d23c6": [
+            {
+                "compartmentId": "ocid1.tenancy.oc1..aaaaaaaaq56ynlpwhrbjyqsrelnexprhpaoh5sdlq5np6jx3nfrjwq3vikma",
+                "id": "ocid1.availabilitydomain.oc1..aaaaaaaar5i2dxxyyprdqq5egzf6m4m5xa5ywtuknisknxccvcqw4v7ps5ea",
+                "name": "tyzX:AP-SINGAPORE-1-AD-1"
+            }
+        ]
+    }
+}
