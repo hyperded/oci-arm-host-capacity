@@ -23,7 +23,8 @@ date_default_timezone_set('Asia/Ho_Chi_Minh');
 $notifier = new Notifier();
 
 // grown ass man btw
-$PRTS_THERESA_LINES = json_decode(getenv('PRTS_THERESA'), true);
+$PRTS_THERESA_LINES = json_decode(file_get_contents($_ENV['LINES_PATH']), true);
+
 
 /*
  * No need to modify any value in this file anymore!
@@ -44,6 +45,7 @@ $config = new OciConfig(
     (int) getenv('OCI_MEMORY_IN_GBS')
 );
 $DISCORD_WEB_HOOK = getenv('DISCORD_WEB_HOOK');
+$THERESIS_WEB_HOOK = getenv('THERESIS_WEB_HOOK');
 
 $bootVolumeSizeInGBs = (string) getenv('OCI_BOOT_VOLUME_SIZE_IN_GBS');
 $bootVolumeId = (string) getenv('OCI_BOOT_VOLUME_ID');
@@ -107,7 +109,9 @@ foreach ($availabilityDomains as $availabilityDomainEntity) {
 //            if ($notifier->isSupported()) {
 //                $notifier->notify($message);
 //            }
-
+        $discord = $notifier->discord($THERESIS_WEB_HOOK)
+        ->message("still alive. \nAt: " . date('H:i:s') . "\nwatch your back.\n" . date('Y-m-d H:i:s (l)'))
+        ->send();
         if (
             $e->getCode() === 500 &&
             strpos($message, 'InternalError') !== false &&
